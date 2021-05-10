@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
+    AsyncStorage,
   Button,
   StyleSheet,
   Text,
@@ -8,7 +9,12 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
-import { login, signup } from "../store/actions/auth";
+import {
+  login,
+  signup,
+  authenticate,
+  setDidTryAL,
+} from "../store/actions/auth";
 
 const AuthScreen = (props) => {
   const [email, setEmail] = useState("");
@@ -27,6 +33,40 @@ const AuthScreen = (props) => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const tryLogin = async () => {
+      const userData = await AsyncStorage.getItem(
+        "userData"
+      );
+      if (!userData) {
+        // props.navigation.navigate('Auth');
+        dispatch(setDidTryAL());
+        return;
+      }
+      const transformedData = JSON.parse(userData);
+      const { token, userId, expiryDate } = transformedData;
+      const expirationDate = new Date(expiryDate);
+
+      if (
+        expirationDate <= new Date() ||
+        !token ||
+        !userId
+      ) {
+        // props.navigation.navigate('Auth');
+        dispatch(setDidTryAL());
+        return;
+      }
+
+      const expirationTime =
+        expirationDate.getTime() - new Date().getTime();
+
+      // props.navigation.navigate('Shop');
+      dispatch(authenticate(userId, token, expirationTime));
+    };
+
+    tryLogin();
+  }, [dispatch]);
 
   return (
     <View style={styles.screen}>
