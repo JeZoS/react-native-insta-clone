@@ -59,7 +59,7 @@ export default function ImagePickerExample(props) {
       ? props.route.params.setChange
       : null;
     setChange((prev) => !prev);
-    props.navigation.navigate("HOME", { change: true });
+    props.navigation.goBack();
     // console.log(resData);
   };
 

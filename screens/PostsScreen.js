@@ -26,6 +26,7 @@ const PostsScreen = (props) => {
   const [nData, setNDate] = useState(null);
 
   const onClickAdd = () => {
+    props.navigation.setOptions({setChange:setChange})
     props.navigation.navigate("upload",{setChange:setChange});
   };
 

@@ -11,6 +11,7 @@ import Like from "../screens/Like";
 import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import UploadImageScreen from "../screens/UploadImageScreen";
+import AuthScreen from "../screens/AuthScreen";
 
 const PostStack = createStackNavigator();
 const SearchStack = createStackNavigator();
@@ -148,5 +149,22 @@ export const Main = () => {
       />
       {/* <MainNavigator.Screen/> */}
     </MainNavigator.Navigator>
+  );
+};
+
+const AuthNavigator = createStackNavigator();
+
+export const Auth = () => {
+  return (
+    <AuthNavigator.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AuthNavigator.Screen
+        name="auth"
+        component={AuthScreen}
+      />
+    </AuthNavigator.Navigator>
   );
 };
