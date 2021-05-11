@@ -10,22 +10,50 @@ import {
   View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 
 const PostItem = ({ post }) => {
   const [like, setLike] = useState(false);
   const [show, setShow] = useState(false);
   var lastTap = null;
 
+  const email = useSelector((state) => state.auth.email);
+
+  const sendLike = async () => {
+    if (post.likes.indexOf(`${email}`) !== -1) {
+      console.log(post.likes);
+    } else {
+      try {
+        const response = await fetch(
+          `https://insta-clone-522aa-default-rtdb.firebaseio.com/posts/${post.id}.json`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              likes: [...post.likes, email],
+            }),
+          }
+        );
+        const resData = await response.json();
+        // console.log(resData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   const handleDoubleTap = () => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
     if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
-      setLike((prev) => !prev);
+      // setLike((prev) => !prev);
       setShow(true);
+      sendLike();
       setTimeout(() => {
         setShow(false);
       }, 1000);
-      // console.log(like);
     } else {
       lastTap = now;
     }
@@ -78,8 +106,18 @@ const PostItem = ({ post }) => {
       <View style={styles.options}>
         <View style={styles.optionsLeft}>
           <Ionicons
+            onPress={sendLike}
             style={styles.icons}
-            name="md-heart-outline"
+            name={
+              post.likes.indexOf(`${email}`) === -1
+                ? "md-heart-outline"
+                : "heart"
+            }
+            color={
+              post.likes.indexOf(`${email}`) === -1
+                ? "white"
+                : "red"
+            }
             size={27}
           />
           <Ionicons

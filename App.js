@@ -10,6 +10,7 @@ import {
   createStore,
 } from "redux";
 import authReducer from "./store/reducers/auth";
+import postReducer from "./store/reducers/posts"
 import ReduxThunk from "redux-thunk";
 import { Provider } from "react-redux";
 import App2 from "./App2";
@@ -46,6 +47,7 @@ try {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  posts:postReducer
 });
 
 const store = createStore(

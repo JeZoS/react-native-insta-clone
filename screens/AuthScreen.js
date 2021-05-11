@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-    AsyncStorage,
+  AsyncStorage,
   Button,
   StyleSheet,
   Text,
@@ -45,7 +45,12 @@ const AuthScreen = (props) => {
         return;
       }
       const transformedData = JSON.parse(userData);
-      const { token, userId, expiryDate } = transformedData;
+      const {
+        token,
+        userId,
+        expiryDate,
+        email,
+      } = transformedData;
       const expirationDate = new Date(expiryDate);
 
       if (
@@ -62,7 +67,9 @@ const AuthScreen = (props) => {
         expirationDate.getTime() - new Date().getTime();
 
       // props.navigation.navigate('Shop');
-      dispatch(authenticate(userId, token, expirationTime));
+      dispatch(
+        authenticate(userId, token, expirationTime, email)
+      );
     };
 
     tryLogin();

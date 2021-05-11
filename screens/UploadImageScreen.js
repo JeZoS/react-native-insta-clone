@@ -18,13 +18,16 @@ import HeaderButtonComponent from "../Components/HeaderButton";
 import firebase from "firebase/app";
 import "firebase/storage";
 import Form from "./Form";
+import { useDispatch, useSelector } from "react-redux";
+import { uploadPost } from "../store/actions/posts";
 
 export default function ImagePickerExample(props) {
   const [image, setImage] = useState(null);
   const [data, setData] = useState("");
-  //   const [editor, setEditor] = useState(false);
   const [upload, setUpload] = useState(false);
   const [description, setDescription] = useState("");
+  const email = useSelector((state) => state.auth.email);
+  const dispatch = useDispatch();
 
   const getImages = async () => {
     const res = await MediaLibrary.getAssetsAsync({
@@ -35,43 +38,45 @@ export default function ImagePickerExample(props) {
   };
 
   const uploadData = async (url) => {
-    const response = await fetch(
-      "https://insta-clone-522aa-default-rtdb.firebaseio.com/posts.json",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: new Date().toString(),
-          profilePic:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5OVNjuB3WZe4cjztwgxfoLTswodimdxKgbg&usqp=CAU",
-          caption: description,
-          postImage: url,
-          likes: ["1"],
-          comment: ["1"],
-          userName: "johnDoe",
-        }),
-      }
-    );
-    // const resData = await response.json();
-    const setChange = props.route.params
-      ? props.route.params.setChange
-      : null;
-    setChange((prev) => !prev);
+    dispatch(uploadPost(url, description, email));
+    // const response = await fetch(
+    //   "https://insta-clone-522aa-default-rtdb.firebaseio.com/posts.json",
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       id: new Date().toString(),
+    //       profilePic:
+    //         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5OVNjuB3WZe4cjztwgxfoLTswodimdxKgbg&usqp=CAU",
+    //       caption: description,
+    //       postImage: url,
+    //       likes: ["1"],
+    //       comment: ["1"],
+    //       userName: email,
+    //     }),
+    //   }
+    // );
+    // // const resData = await response.json();
+    // const setChange = props.route.params
+    //   ? props.route.params.setChange
+    //   : null;
+    // setChange((prev) => !prev);
     props.navigation.goBack();
     // console.log(resData);
   };
 
+  //
+  // upload image and returns its download URL
+  //
   const uploadAsFile = async (uri) => {
     console.log("uploadAsFile", uri);
     const response = await fetch(uri);
     const blob = await response.blob();
-
     var metadata = {
       contentType: "image/jpeg",
     };
-
     let name = image.filename;
     const ref = firebase
       .storage()
@@ -79,7 +84,6 @@ export default function ImagePickerExample(props) {
       .child("images/" + name);
 
     const task = ref.put(blob, metadata);
-
     return new Promise((resolve, reject) => {
       task.on(
         "state_changed",
@@ -93,19 +97,8 @@ export default function ImagePickerExample(props) {
         (error) => reject(error),
         () => {
           task.snapshot.ref.getDownloadURL().then((url) => {
-            // console.log(url)
             uploadData(url);
           });
-          // save a reference to the image for listing purposes
-          //   var ref = firebase.database().ref('assets');
-          //   ref.push({
-          //     'URL': downloadURL,
-          //     //'thumb': _imageData['thumb'],
-          //     'name': name,
-          //     //'coords': _imageData['coords'],
-          //     'owner': firebase.auth().currentUser && firebase.auth().currentUser.uid,
-          //     'when': new Date().getTime()
-          //   }).then(r => resolve(r), e => reject(e))
         }
       );
     });
@@ -131,6 +124,7 @@ export default function ImagePickerExample(props) {
       }
     })();
   }, [props.navigation]);
+
   useEffect(() => {
     props.navigation.setOptions({
       headerRight: () => (

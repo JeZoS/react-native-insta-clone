@@ -4,11 +4,12 @@ import {
   HeaderButtons,
   Item,
 } from "react-navigation-header-buttons";
+import { useDispatch, useSelector } from "react-redux";
 import HeaderButtonComponent from "../Components/HeaderButton";
+import { fetchPosts } from "../store/actions/posts";
 import PostItem from "./PostItem";
 
 const PostsScreen = (props) => {
-  const [change, setChange] = useState(false);
   // const data = [
   //   {
   //     id: "1",
@@ -23,11 +24,8 @@ const PostsScreen = (props) => {
   //   },
   // ];
 
-  const [nData, setNDate] = useState(null);
-
   const onClickAdd = () => {
-    props.navigation.setOptions({setChange:setChange})
-    props.navigation.navigate("upload",{setChange:setChange});
+    props.navigation.navigate("upload");
   };
 
   useEffect(() => {
@@ -57,35 +55,18 @@ const PostsScreen = (props) => {
     });
   });
 
-  const fetchData = async () => {
-    const response = await fetch(
-      "https://insta-clone-522aa-default-rtdb.firebaseio.com/posts.json"
-    );
-    const resData = await response.json();
-    // console.log(resData);
-    var newData = [];
-    for (const key in resData) {
-      newData.push({
-        id: key,
-        profilePic: resData[key].profilePic,
-        caption: resData[key].caption,
-        postImage: resData[key].postImage,
-        likes: resData[key].likes,
-        comment: resData[key].comment,
-        userName: resData[key].userName,
-      });
-    }
-    setNDate(newData);
-  };
+  const dispatch = useDispatch();
+
+  const posts = useSelector((state) => state.posts.posts);
 
   useEffect(() => {
-    fetchData();
-  }, [change]);
+    dispatch(fetchPosts());
+  }, [dispatch, posts]);
 
   return (
     <View>
       <FlatList
-        data={nData}
+        data={posts}
         renderItem={(itemData) => (
           <PostItem post={itemData.item} />
         )}

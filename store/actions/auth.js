@@ -12,13 +12,19 @@ export const setDidTryAL = () => {
   return { type: SET_DID_TRY_AL };
 };
 
-export const authenticate = (userId, token, expiryTime) => {
+export const authenticate = (
+  userId,
+  token,
+  expiryTime,
+  email
+) => {
   return (dispatch) => {
     dispatch(setLogoutTimer(expiryTime));
     dispatch({
       type: AUTHENTICATE,
       userId: userId,
       token: token,
+      email: email,
     });
   };
 };
@@ -57,7 +63,8 @@ export const signup = (email, password) => {
       authenticate(
         resData.localId,
         resData.idToken,
-        parseInt(resData.expiresIn) * 1000
+        parseInt(resData.expiresIn) * 1000,
+        email
       )
     );
     const expirationDate = new Date(
@@ -67,7 +74,8 @@ export const signup = (email, password) => {
     saveDataToStorage(
       resData.idToken,
       resData.localId,
-      expirationDate
+      expirationDate,
+      email
     );
   };
 };
@@ -108,7 +116,8 @@ export const login = (email, password) => {
       authenticate(
         resData.localId,
         resData.idToken,
-        parseInt(resData.expiresIn) * 1000
+        parseInt(resData.expiresIn) * 1000,
+        email
       )
     );
     const expirationDate = new Date(
@@ -118,7 +127,8 @@ export const login = (email, password) => {
     saveDataToStorage(
       resData.idToken,
       resData.localId,
-      expirationDate
+      expirationDate,
+      email
     );
   };
 };
@@ -146,7 +156,8 @@ const setLogoutTimer = (expirationTime) => {
 const saveDataToStorage = (
   token,
   userId,
-  expirationDate
+  expirationDate,
+  email
 ) => {
   AsyncStorage.setItem(
     "userData",
@@ -154,6 +165,7 @@ const saveDataToStorage = (
       token: token,
       userId: userId,
       expiryDate: expirationDate.toISOString(),
+      email: email,
     })
   );
 };
