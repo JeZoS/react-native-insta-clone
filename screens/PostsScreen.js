@@ -10,20 +10,6 @@ import { fetchPosts } from "../store/actions/posts";
 import PostItem from "./PostItem";
 
 const PostsScreen = (props) => {
-  // const data = [
-  //   {
-  //     id: "1",
-  //     profilePic:
-  //       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5OVNjuB3WZe4cjztwgxfoLTswodimdxKgbg&usqp=CAU",
-  //     caption: "Dummy caption",
-  //     postImage:
-  //       "https://s18955.pcdn.co/wp-content/uploads/2020/02/Blog_InstaLikes_030320_WP-3.png",
-  //     likes: ["1", "2"],
-  //     comment: ["1", "2"],
-  //     userName: "johnDoe",
-  //   },
-  // ];
-
   const onClickAdd = () => {
     props.navigation.navigate("upload");
   };

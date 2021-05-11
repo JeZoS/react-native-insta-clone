@@ -1,67 +1,40 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Dimensions,
-  Image,
   ImageBackground,
   StyleSheet,
   Text,
-  // TouchableWithoutFeedback,
+  TouchableOpacity,
   View,
+  Image,
+  Dimensions,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteThisPost,
+  getSingle,
+} from "../store/actions/posts";
 
-const PostItem = ({ post }) => {
-  const [show, setShow] = useState(false);
+const SinglePost = (props) => {
+  const id = props.route.params.id;
 
-  var lastTap = null;
+  const { single: post } = useSelector(
+    (state) => state.posts
+  );
+  const dispatch = useDispatch();
 
-  const email = useSelector((state) => state.auth.email);
+  useEffect(() => {
+    dispatch(getSingle(id));
+  }, [dispatch]);
 
-  const sendLike = async () => {
-    if (post.likes.indexOf(`${email}`) !== -1) {
-      console.log(post.likes);
-    } else {
-      try {
-        const response = await fetch(
-          `https://insta-clone-522aa-default-rtdb.firebaseio.com/posts/${post.id}.json`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              likes: [...post.likes, email],
-            }),
-          }
-        );
-        const resData = await response.json();
-        // console.log(resData);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
-  const handleDoubleTap = () => {
-    const now = Date.now();
-    const DOUBLE_PRESS_DELAY = 300;
-    if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
-      setShow(true);
-      sendLike();
-      setTimeout(() => {
-        setShow(false);
-      }, 1000);
-    } else {
-      lastTap = now;
-    }
+  const deletePost = () => {
+    dispatch(deleteThisPost(id));
+    props.navigation.goBack();
   };
 
   return (
     <TouchableOpacity
       activeOpacity={1}
-      onPress={handleDoubleTap}
       style={styles.screen}
     >
       <View style={styles.head}>
@@ -77,8 +50,9 @@ const PostItem = ({ post }) => {
           <Text>{post.userName}</Text>
         </View>
         <Ionicons
-          name="ellipsis-vertical-outline"
+          name="trash"
           size={23}
+          onPress={deletePost}
         />
       </View>
       <View style={styles.imageContainer}>
@@ -90,33 +64,14 @@ const PostItem = ({ post }) => {
           source={{
             uri: `${post.postImage}`,
           }}
-        >
-          {show && (
-            <View>
-              <Ionicons
-                size={170}
-                name="heart"
-                color="red"
-              />
-            </View>
-          )}
-        </ImageBackground>
+        ></ImageBackground>
       </View>
       <View style={styles.options}>
         <View style={styles.optionsLeft}>
           <Ionicons
-            onPress={sendLike}
             style={styles.icons}
-            name={
-              post.likes.indexOf(`${email}`) === -1
-                ? "md-heart-outline"
-                : "heart"
-            }
-            color={
-              post.likes.indexOf(`${email}`) === -1
-                ? "black"
-                : "red"
-            }
+            name="heart"
+            color="red"
             size={27}
           />
           <Ionicons
@@ -160,7 +115,7 @@ const PostItem = ({ post }) => {
   );
 };
 
-export default PostItem;
+export default SinglePost;
 
 const styles = StyleSheet.create({
   padding: {

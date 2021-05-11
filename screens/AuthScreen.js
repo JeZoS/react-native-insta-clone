@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  ActivityIndicator,
   AsyncStorage,
   Button,
   StyleSheet,
@@ -20,10 +21,12 @@ const AuthScreen = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginSignup, setLogin] = useState(true);
+  const [trylogin, setTry] = useState(false);
 
   const dispatch = useDispatch();
   const onPressHandler = () => {
     try {
+      setTry(true);
       if (loginSignup) {
         dispatch(login(email, password));
       } else {
@@ -32,6 +35,7 @@ const AuthScreen = (props) => {
     } catch (error) {
       console.log(error);
     }
+    setTry(false);
   };
 
   useEffect(() => {
@@ -97,10 +101,14 @@ const AuthScreen = (props) => {
         />
       </View>
       <View style={styles.inputcontainer}>
-        <Button
-          title={loginSignup ? "Login" : "Signup"}
-          onPress={onPressHandler}
-        />
+        {!trylogin ? (
+          <Button
+            title={loginSignup ? "Login" : "Signup"}
+            onPress={onPressHandler}
+          />
+        ) : (
+          <ActivityIndicator size="large" color="green" />
+        )}
       </View>
       <View
         style={{

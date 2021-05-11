@@ -12,6 +12,7 @@ import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import UploadImageScreen from "../screens/UploadImageScreen";
 import AuthScreen from "../screens/AuthScreen";
+import SinglePost from "../screens/SinglePost";
 
 const PostStack = createStackNavigator();
 const SearchStack = createStackNavigator();
@@ -65,6 +66,10 @@ const ProfileNavigator = () => {
       <ProfileStack.Screen
         name="profileStack"
         component={Profile}
+      />
+      <ProfileStack.Screen
+        name="single"
+        component={SinglePost}
       />
     </ProfileStack.Navigator>
   );

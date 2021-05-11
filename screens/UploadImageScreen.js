@@ -5,8 +5,7 @@ import {
   Platform,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
-  Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
@@ -26,6 +25,7 @@ export default function ImagePickerExample(props) {
   const [data, setData] = useState("");
   const [upload, setUpload] = useState(false);
   const [description, setDescription] = useState("");
+  const [tryUpload, setTryUpload] = useState(false);
   const email = useSelector((state) => state.auth.email);
   const dispatch = useDispatch();
 
@@ -39,32 +39,8 @@ export default function ImagePickerExample(props) {
 
   const uploadData = async (url) => {
     dispatch(uploadPost(url, description, email));
-    // const response = await fetch(
-    //   "https://insta-clone-522aa-default-rtdb.firebaseio.com/posts.json",
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       id: new Date().toString(),
-    //       profilePic:
-    //         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5OVNjuB3WZe4cjztwgxfoLTswodimdxKgbg&usqp=CAU",
-    //       caption: description,
-    //       postImage: url,
-    //       likes: ["1"],
-    //       comment: ["1"],
-    //       userName: email,
-    //     }),
-    //   }
-    // );
-    // // const resData = await response.json();
-    // const setChange = props.route.params
-    //   ? props.route.params.setChange
-    //   : null;
-    // setChange((prev) => !prev);
+    setTryUpload(false);
     props.navigation.goBack();
-    // console.log(resData);
   };
 
   //
@@ -148,6 +124,7 @@ export default function ImagePickerExample(props) {
               iconName="checkmark-outline"
               color="blue"
               onPress={() => {
+                setTryUpload(true);
                 uploadImage();
               }}
             />
@@ -156,6 +133,20 @@ export default function ImagePickerExample(props) {
       ),
     });
   });
+
+  if (tryUpload) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="green" />
+      </View>
+    );
+  }
 
   if (upload) {
     return (

@@ -5,7 +5,6 @@ export const fetchPosts = () => {
       "https://insta-clone-522aa-default-rtdb.firebaseio.com/posts.json"
     );
     const resData = await response.json();
-    // console.log(resData);
     var newData = [];
     var userData = [];
     for (const key in resData) {
@@ -25,14 +24,15 @@ export const fetchPosts = () => {
     }
     dispatch({
       type: "SET_POSTS",
-      posts: newData,
-      userPosts: userData,
+      posts: newData.reverse(),
+      userPosts: userData.reverse(),
     });
   };
 };
 
 export const uploadPost = (url, description, email) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const email = getState().auth.email;
     const response = await fetch(
       "https://insta-clone-522aa-default-rtdb.firebaseio.com/posts.json",
       {
@@ -41,16 +41,41 @@ export const uploadPost = (url, description, email) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: new Date().toString(),
+          //   id: new Date().toString(),
           profilePic:
             "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png",
           caption: description,
           postImage: url,
-          likes: ["1"],
+          likes: [`${email}`],
           comment: ["1"],
           userName: email,
         }),
       }
     );
+  };
+};
+
+export const getSingle = (id) => {
+  return async (dispatch) => {
+    const response = await fetch(
+      `https://insta-clone-522aa-default-rtdb.firebaseio.com/posts/${id}.json`
+    );
+    const resData = await response.json();
+    dispatch({
+      type: "SET_SINGLE",
+      payload: resData,
+    });
+  };
+};
+
+export const deleteThisPost = (id) => {
+  return async (dispatch) => {
+    const response = await fetch(
+      `https://insta-clone-522aa-default-rtdb.firebaseio.com/posts/${id}.json`,
+      {
+        method: "DELETE",
+      }
+    );
+    const resData = await response.json();
   };
 };
