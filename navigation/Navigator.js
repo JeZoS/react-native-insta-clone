@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import UploadImageScreen from "../screens/UploadImageScreen";
 import AuthScreen from "../screens/AuthScreen";
 import SinglePost from "../screens/SinglePost";
+import Comments from "../screens/Comments";
 
 const PostStack = createStackNavigator();
 const SearchStack = createStackNavigator();
@@ -27,6 +28,10 @@ export const PostsNavigator = () => {
         name="posts"
         component={PostsScreen}
         options={screenOptions}
+      />
+      <PostStack.Screen
+        name="comment"
+        component={Comments}
       />
     </PostStack.Navigator>
   );

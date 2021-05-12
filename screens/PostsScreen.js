@@ -54,7 +54,7 @@ const PostsScreen = (props) => {
       <FlatList
         data={posts}
         renderItem={(itemData) => (
-          <PostItem post={itemData.item} />
+          <PostItem post={itemData.item} navigation={props.navigation}/>
         )}
       />
     </View>

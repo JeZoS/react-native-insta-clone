@@ -79,3 +79,35 @@ export const deleteThisPost = (id) => {
     const resData = await response.json();
   };
 };
+
+export const addComment = (
+  id,
+  email,
+  comment,
+  allComments
+) => {
+  return async (dispatch) => {
+    console.log(id, email, comment, allComments);
+    const response = await fetch(
+      `https://insta-clone-522aa-default-rtdb.firebaseio.com/posts/${id}.json`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          comment: [
+            ...allComments,
+            {
+              by: email,
+              text: comment,
+              id: new Date().toString(),
+            },
+          ],
+        }),
+      }
+    );
+    const resData = await response.json();
+    console.log(resData);
+  };
+};

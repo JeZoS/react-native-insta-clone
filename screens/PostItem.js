@@ -12,7 +12,7 @@ import {
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 
-const PostItem = ({ post }) => {
+const PostItem = ({ post, navigation }) => {
   const [show, setShow] = useState(false);
 
   var lastTap = null;
@@ -42,6 +42,13 @@ const PostItem = ({ post }) => {
         console.log(error);
       }
     }
+  };
+
+  const commentHandler = () => {
+    // console.log(post.id)
+    navigation.navigate("comment", {
+      post: post,
+    });
   };
 
   const handleDoubleTap = () => {
@@ -150,11 +157,15 @@ const PostItem = ({ post }) => {
             {post.caption}
           </Text>
         </View>
-        <View style={styles.padding}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={commentHandler}
+          style={styles.padding}
+        >
           <Text style={{ color: "gray" }}>
             view all {post.comment.length} Comments
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   View,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -31,6 +32,20 @@ const SinglePost = (props) => {
     dispatch(deleteThisPost(id));
     props.navigation.goBack();
   };
+
+  if (post === null) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ActivityIndicator size={50} color="green" />
+      </View>
+    );
+  }
 
   return (
     <TouchableOpacity
